@@ -11,14 +11,14 @@ steps:
   # Download secure file from azure library
 - task: DownloadSecureFile@1
   inputs:
-   secureFile: '.env.development'
+   secureFile: '.env.production'
 
   # Copy the .env file
 - task: CopyFiles@2
   inputs:
       sourceFolder: '$(Agent.TempDirectory)'
-      contents: '**/*.env.development'
-      targetFolder: '$(YOUR_DEFINED_PROJECT_ROOT_FOLDER_VARIABLE)'
+      contents: '**/*.env.production'
+      targetFolder: '.'
       cleanTargetFolder: false
 
 - task: Npm@1
