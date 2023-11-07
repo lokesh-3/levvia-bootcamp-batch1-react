@@ -1,5 +1,4 @@
 pool: Selfhosted-Bootcamp
-demands: npm
 
 steps:
 - task: Npm@1
