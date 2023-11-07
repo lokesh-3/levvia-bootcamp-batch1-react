@@ -1,4 +1,6 @@
-pool: Selfhosted-Bootcamp
+pool:
+  name: Selfhosted-Bootcamp
+  demands: npm
 
 steps:
 - task: Npm@1
