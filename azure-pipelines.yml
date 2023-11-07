@@ -3,9 +3,8 @@ pool:
 
 steps:
 - task: Npm@1
-  displayName: 'npm install'
   inputs:
-    verbose: false
+    command: 'install'
 
   # Download secure file from azure library
 - task: DownloadSecureFile@1
