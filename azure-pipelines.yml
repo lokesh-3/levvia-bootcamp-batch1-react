@@ -2,6 +2,9 @@ pool:
   name: Selfhosted-Bootcamp
 
 steps:
+- task: Npm@1
+  inputs:
+    command: 'install'
 
   # Download secure file from azure library
 - task: DownloadSecureFile@1
