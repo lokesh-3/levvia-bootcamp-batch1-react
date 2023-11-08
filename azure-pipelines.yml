@@ -1,10 +1,12 @@
 pool:
-  name: Selfhosted-Bootcamp
+  name: Azure Pipelines
+  demands: npm
 
 steps:
 - task: Npm@1
+  displayName: 'npm install'
   inputs:
-    command: 'install'
+    verbose: false
 
   # Download secure file from azure library
 - task: DownloadSecureFile@1
