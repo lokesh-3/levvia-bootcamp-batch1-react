@@ -44,6 +44,6 @@ export const msalConfig: Configuration = {
     },
 };
 export const loginRequest: RedirectRequest = {
-    scopes: ["User.Read"],
+    scopes: ["api://d9c33e4e-07ee-49e0-8686-c28cf1569774/Levvia.Scope"],
 };
 

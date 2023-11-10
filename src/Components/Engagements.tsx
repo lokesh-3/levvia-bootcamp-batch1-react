@@ -2,15 +2,12 @@ import { useState } from "react";
 import { CreateEngagement } from "./CreateEngagement";
 
 
-
 interface IEngagement {
     tableArray: any
 }
 
 export const Engagements = (props: IEngagement) => {
-    // const history = useHistory();
     const [showCreateEngagementsComponent, setshowCreateEngagementsComponent] = useState(false);
-
     const toggleCreateEngagementsComponent = () => {
         window.location.href = '/createEngagement'
     };
@@ -51,7 +48,7 @@ export const Engagements = (props: IEngagement) => {
                     </tr>
                 </tbody>
             </table>
-            
+
             {showCreateEngagementsComponent && <CreateEngagement />} {/* Conditionally render ChildComponent */}
         </>
     )
