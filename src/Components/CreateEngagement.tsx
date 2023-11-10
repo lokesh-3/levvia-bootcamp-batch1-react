@@ -14,7 +14,7 @@ export const CreateEngagement = () => {
   // API for country ----------------------------------------------------------------
   async function fetchData() {
     try {
-      const response = await fetch('https://localhost:7294/api/Comman/GetAllCountry');
+      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/Comman/GetAllCountry');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -29,11 +29,11 @@ export const CreateEngagement = () => {
   }
   const [selectedCountryOption, setselectedCountryOption] = useState(data);
 
-  // API for Audit types---------------------------------------------------------
+  // API for Audit types----------------------------------------------https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits-----------
   const [AuditTypesdata, setAuditTypesdata] = useState<any>([]);
   async function getAuditTypesData() {
     try {
-      const response = await fetch('https://localhost:7294/api/AuditMaster/GetAllAudits');
+      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
