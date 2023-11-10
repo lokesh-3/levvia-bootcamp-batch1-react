@@ -5,32 +5,20 @@ import Header from './Header'
 import Footer from './Footer'
 
 export const CreateEngagement = () => {
-  const options = [
-    { value: 'Financial', label: 'Financial' },
-    { value: 'Compliance', label: 'Compliance' },
-    { value: 'Operational', label: 'Operational' },
-  ];
-  // const countryOptions = [
-  //   { value: 'India', label: 'India' },
-  //   { value: 'USA', label: 'USA' },
-  //   { value: 'Canada', label: 'Canada' },
-  // ];
 
-  const [selectedOption, setSelectedOption] = useState(options[0].value);
+  // Api Call --------------------------------------------------------------------------------------
+  const [data, setData] = useState<any>([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
-// Api Call 
-const [data, setData] = useState<any>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  // API for country ----------------------------------------------------------------
   async function fetchData() {
     try {
-      const response = await fetch('https://localhost:44329/api/CreateEngagement');
-  
+      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/Comman/GetAllCountry');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
       const data = await response.json();
       console.log('Response Data:', data);
       setData(data)
@@ -39,18 +27,37 @@ const [data, setData] = useState<any>([]);
       console.error('Fetch Error:', error);
     }
   }
-  useEffect(()=>{
-    fetchData()
-  
-    },[])
+  const [selectedCountryOption, setselectedCountryOption] = useState(data);
 
-    const [selectedCountryOption, setselectedCountryOption] = useState(data);
+  // API for Audit types----------------------------------------------https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits-----------
+  const [AuditTypesdata, setAuditTypesdata] = useState<any>([]);
+  async function getAuditTypesData() {
+    try {
+      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-// Api Call End
+      const AuditTypesdata = await response.json();
+      setAuditTypesdata(AuditTypesdata)
+      // Now you can work with the JSON data
+    } catch (error) {
+      console.error('Fetch Error:', error);
+    }
+  }
+  const [selectedAuditTypeOption, setselectedAuditTypeOption] = useState(AuditTypesdata);
+
+  //API call functions--------------------------------
+  useEffect(() => {
+    fetchData();
+    getAuditTypesData();
+  }, [])
+
+  // Api Call End--------------------------------------------
 
 
-  const handleSelectChange = (event: any) => {
-    setSelectedOption(event.target.value);
+  const handleselectedAuditTypeOption = (event: any) => {
+    setselectedAuditTypeOption(event.target.value);
   };
   const handleSelectCountryChange = (event: any) => {
     setselectedCountryOption(event.target.value);
@@ -74,11 +81,11 @@ const [data, setData] = useState<any>([]);
             <label className='flex gap-2' htmlFor="clientName">Client Name* :
               <input className='border border-black' type="text" id="clientName" name="clientName" />
             </label>
-            <label htmlFor="auditType">Audit Type Hello* :
-            <select className='border border-black ml-5' value={selectedOption} onChange={handleSelectChange}>
-                {options.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+            <label htmlFor="auditType">Audit Type* :
+              <select className='border border-black ml-5' value={selectedAuditTypeOption} onChange={handleselectedAuditTypeOption}>
+                {AuditTypesdata.map((item: any, index: any) => (
+                  <option key={index} value={item?.id}>
+                    {item?.auditName}
                   </option>
                 ))}
               </select>
@@ -96,9 +103,9 @@ const [data, setData] = useState<any>([]);
           <div>
             <label htmlFor="country">Country: </label>
             <select className='border border-black ml-5' value={selectedCountryOption} onChange={handleSelectCountryChange}>
-              {data.map((item:any,index:any) => (
-                <option key={index} value={item?.countryId}>
-                  {item?.countryName}
+              {data.map((item: any, index: any) => (
+                <option key={index} value={item?.id}>
+                  {item?.countyName}
                 </option>
               ))}
             </select>

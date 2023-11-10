@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CreateEngagement } from "./CreateEngagement";
-
+import { useNavigate } from "react-router-dom";
 
 interface IEngagement {
     tableArray: any
@@ -8,8 +8,9 @@ interface IEngagement {
 
 export const Engagements = (props: IEngagement) => {
     const [showCreateEngagementsComponent, setshowCreateEngagementsComponent] = useState(false);
+    const navigate = useNavigate();
     const toggleCreateEngagementsComponent = () => {
-        window.location.href = '/createEngagement'
+        navigate("/createEngagement")
     };
     return (
         <>
