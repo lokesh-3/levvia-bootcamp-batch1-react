@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Engagements } from "./Engagements";
 import { CreateEngagement } from "./CreateEngagement";
 import { Reports } from "./Reports";
@@ -19,7 +19,26 @@ export const TabHeader = (props: ITabHeader) => {
     const toggleshowapiConsumerComponent = () => {
         setshowapiConsumerComponent(!showapiConsumerComponent);
     };
-    const [arr1, setArr1] = useState(["1234", "Deloitte", "Financial", "In Progress", " 10-10-2023", " 30-10-2023"]);
+
+    const [AllEngagementdata, setAllEngagementdata] = useState<any>([]);
+  async function getEngagementData() {
+    try {
+      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/Engagement/GetAll');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const Engagementdata = await response.json();
+      setAllEngagementdata(Engagementdata)
+      // Now you can work with the JSON data
+    } catch (error) {
+      console.error('Fetch Error:', error);
+    }
+  }
+  useEffect(() => {
+    getEngagementData();
+  }, [])
+    //const [arr1, setArr1] = useState(["1234", "Deloitte", "Financial", "In Progress", " 10-10-2023", " 30-10-2023"]);
 
     // NEED TO CREATE ONE FUNCTION WHIC USES ROUTER TO RENDER THE DESIRED Tab COMPONENT 
     const [activeTab, setActiveTab] = useState(0);
@@ -48,7 +67,7 @@ export const TabHeader = (props: ITabHeader) => {
     const tabs = [
         { label: 'Engagements', component: <Engagements tableArray={undefined} /> },
         { label: 'Reports', component: <Reports /> },
-        { label: 'System', component: <Reports /> },
+        { label: 'Settings', component: <Reports /> },
         // Add more tab data as needed
     ];
     return (
@@ -70,7 +89,7 @@ export const TabHeader = (props: ITabHeader) => {
             </div>
             {showReportsComponent && <Reports />}
             {/* {showapiConsumerComponent && <ApiConsumer/>} */}
-            {showEngagementsComponent && <Engagements tableArray={arr1} />}
+            {showEngagementsComponent && <Engagements tableArray={AllEngagementdata} />}
             {/* Conditionally render ChildComponent */}
 
         </>

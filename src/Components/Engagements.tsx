@@ -30,23 +30,17 @@ export const Engagements = (props: IEngagement) => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        {props?.tableArray?.map((item: any) => {
-                            return (
-                                <td className="border-2">{item}</td>
-                            )
-                        })}
-                    </tr>
-
-                    <tr>
-                        {props?.tableArray?.map((item: any) => {
-                            return (
-
-                                <td className="border-2">{item}</td>
-
-                            )
-                        })}
-                    </tr>
+                {props?.tableArray?.map((item:any,index:any) => (
+            <tr key={index}>
+            <td className="border-2">{item.clientId}</td>
+            <td className="border-2">{item.clientName}</td>
+            <td className="border-2">Loading..</td>
+            <td className="border-2">Loading..</td>
+            <td className="border-2">{item.engagementStartDate}</td>
+            <td className="border-2">{item.engagementEndDate}</td>
+            {/* Add more cells based on your data structure */}
+          </tr>
+        ))}
                 </tbody>
             </table>
 
