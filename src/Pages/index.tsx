@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "../Components/Footer";
 import Header from "../Components/Header";
 import { Profile } from "../Components/Profile";
@@ -8,6 +8,7 @@ import { AuthenticatedTemplate } from "@azure/msal-react";
 export const HomePage = () => {
   const [arr,setArr]=useState(["Engagements","Reports","System"])
   const [arr1,setArr1]= useState(["1234","Deloitte","Financial","In Progress"," 10-10-2023"," 30-10-2023"])
+  
   return (
     <div>
       <Header />
