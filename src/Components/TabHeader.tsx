@@ -2,46 +2,45 @@ import { useEffect, useState } from "react";
 import { Engagements } from "./Engagements";
 import { CreateEngagement } from "./CreateEngagement";
 import { Reports } from "./Reports";
+import { getAllEngagment } from "../api";
 
 interface ITabHeader {
     tabArray: any
 }
 export const TabHeader = (props: ITabHeader) => {
     const [showEngagementsComponent, setshowEngagementsComponent] = useState(false);
+    const [showReportsComponent, setshowReportsComponent] = useState(false);
+    const [showapiConsumerComponent, setshowapiConsumerComponent] = useState(false);
+    const [AllEngagementdata, setAllEngagementdata] = useState<any>([]);
+    const [activeTab, setActiveTab] = useState(0);
+
+    const tabs = [
+        { label: 'Engagements', component: <Engagements tableArray={undefined} /> },
+        { label: 'Reports', component: <Reports /> },
+        { label: 'Settings', component: <Reports /> },
+        // Add more tab data as needed
+    ];
+
+    useEffect(() => {
+        getAllEngagment().then((response) => {
+            if (response) {
+                setAllEngagementdata(response)
+            }
+        }).catch((err) => {
+            console.error('Fetch Error:', err);
+        })
+    }, [])
+
     const toggleEngagementsComponent = () => {
         setshowEngagementsComponent(!showEngagementsComponent);
     };
-    const [showReportsComponent, setshowReportsComponent] = useState(false);
     const toggleshowReportsComponent = () => {
         setshowReportsComponent(!showReportsComponent);
     };
-    const [showapiConsumerComponent, setshowapiConsumerComponent] = useState(false);
     const toggleshowapiConsumerComponent = () => {
         setshowapiConsumerComponent(!showapiConsumerComponent);
     };
 
-    const [AllEngagementdata, setAllEngagementdata] = useState<any>([]);
-  async function getEngagementData() {
-    try {
-      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/Engagement/GetAll');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const Engagementdata = await response.json();
-      setAllEngagementdata(Engagementdata)
-      // Now you can work with the JSON data
-    } catch (error) {
-      console.error('Fetch Error:', error);
-    }
-  }
-  useEffect(() => {
-    getEngagementData();
-  }, [])
-    //const [arr1, setArr1] = useState(["1234", "Deloitte", "Financial", "In Progress", " 10-10-2023", " 30-10-2023"]);
-
-    // NEED TO CREATE ONE FUNCTION WHIC USES ROUTER TO RENDER THE DESIRED Tab COMPONENT 
-    const [activeTab, setActiveTab] = useState(0);
     const handleTabClick = (index: any) => {
         setshowEngagementsComponent(false);
         setshowReportsComponent(false);
@@ -59,20 +58,8 @@ export const TabHeader = (props: ITabHeader) => {
             toggleshowapiConsumerComponent();
         }
     };
-    const selectedTab = (item: any) => {
-        if (item == 'engagement') {
-            // Router.push('/engagement')
-        }
-    }
-    const tabs = [
-        { label: 'Engagements', component: <Engagements tableArray={undefined} /> },
-        { label: 'Reports', component: <Reports /> },
-        { label: 'Settings', component: <Reports /> },
-        // Add more tab data as needed
-    ];
     return (
         <>
-
             <div className="flex  list-none text-black gap-2  justify-between align-middle items-center">
                 <ul className="flex gap-2">
                     {tabs?.map((tab, index) => {
