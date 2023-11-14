@@ -1,60 +1,34 @@
-//import React, { useState } from 'react'
 import React, { useState, useEffect } from 'react';
-
 import Header from './Header'
 import Footer from './Footer'
+import axios from 'axios';
+import { getAllAudityTypes, getAllCountry } from '../api';
 
 export const CreateEngagement = () => {
 
-  // Api Call --------------------------------------------------------------------------------------
   const [data, setData] = useState<any>([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
-
-  // API for country ----------------------------------------------------------------
-  async function fetchData() {
-    try {
-      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/Comman/GetAllCountry');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-      console.log('Response Data:', data);
-      setData(data)
-      // Now you can work with the JSON data
-    } catch (error) {
-      console.error('Fetch Error:', error);
-    }
-  }
-  const [selectedCountryOption, setselectedCountryOption] = useState(data);
-
-  // API for Audit types----------------------------------------------https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits-----------
   const [AuditTypesdata, setAuditTypesdata] = useState<any>([]);
-  async function getAuditTypesData() {
-    try {
-      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const AuditTypesdata = await response.json();
-      setAuditTypesdata(AuditTypesdata)
-      // Now you can work with the JSON data
-    } catch (error) {
-      console.error('Fetch Error:', error);
-    }
-  }
+  const [selectedCountryOption, setselectedCountryOption] = useState(data);
   const [selectedAuditTypeOption, setselectedAuditTypeOption] = useState(AuditTypesdata);
 
-  //API call functions--------------------------------
   useEffect(() => {
-    fetchData();
-    getAuditTypesData();
+
+    getAllCountry().then((response) => {
+      if (response) {
+        setData(response);
+      }
+    }).catch((error) => {
+      throw new Error('Network response was not ok');
+    })
+
+    getAllAudityTypes().then((response) => {
+      if (response) {
+        setAuditTypesdata(response);
+      }
+    }).catch((error) => {
+      throw new Error('Network response was not ok');
+    })
   }, [])
-
-  // Api Call End--------------------------------------------
-
 
   const handleselectedAuditTypeOption = (event: any) => {
     setselectedAuditTypeOption(event.target.value);
