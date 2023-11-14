@@ -1,10 +1,10 @@
-//import React, { useState } from 'react'
 import React, { useState, useEffect } from 'react';
-
 import Header from './Header'
 import Footer from './Footer'
 import { any } from 'prop-types';
 import axios from 'axios';
+import { createEngagement, getAllAudityTypes, getAllCountry } from '../api';
+import { useNavigate } from 'react-router-dom';
 
 export const CreateEngagement = () => {
 
@@ -13,58 +13,34 @@ export const CreateEngagement = () => {
     { value: 1, auditName: "Compliance", },
     { value: 2, auditName: "Financial", }
   ];
+  const navigate = useNavigate();
   const [selectedAuditorOption, setselectedAuditorOption] = useState<any>([]);
-
-  // Api Call --------------------------------------------------------------------------------------
   const [data, setData] = useState<any>([]);
   const [clientName, setclientName] = useState('');
   const [selectedStartDate, setselectedStartDate] = useState('');
   const [selectedEndDate, setselectedEndDate] = useState('');
-  const [selectedCountryOption, setselectedCountryOption] = useState('');
-  const [selectedAuditTypeOption, setselectedAuditTypeOption] = useState('');
-  // const [error, setError] = useState(null);
-
-  // API for country ----------------------------------------------------------------
-  async function fetchData() {
-    try {
-      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/Comman/GetAllCountry');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setData(data)
-      // Now you can work with the JSON data
-    } catch (error) {
-      console.error('Fetch Error:', error);
-    }
-  }
-
-
-  // API for Audit types----------------------------------------------https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits-----------
   const [AuditTypesdata, setAuditTypesdata] = useState<any>([]);
-  async function getAuditTypesData() {
-    try {
-      const response = await fetch('https://feature1-webappbackend.azurewebsites.net/api/AuditMaster/GetAllAudits');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+  const [selectedCountryOption, setselectedCountryOption] = useState(data);
+  const [selectedAuditTypeOption, setselectedAuditTypeOption] = useState(AuditTypesdata);
 
-      const AuditTypesdata = await response.json();
-      setAuditTypesdata(AuditTypesdata)
-      // Now you can work with the JSON data
-    } catch (error) {
-      console.error('Fetch Error:', error);
-    }
-  }
-
-
-  //API call functions--------------------------------
   useEffect(() => {
-    fetchData();
-    getAuditTypesData();
-  }, [])
 
-  // Api Call End--------------------------------------------
+    getAllCountry().then((response) => {
+      if (response) {
+        setData(response);
+      }
+    }).catch((error) => {
+      throw new Error('Network response was not ok');
+    })
+
+    getAllAudityTypes().then((response) => {
+      if (response) {
+        setAuditTypesdata(response);
+      }
+    }).catch((error) => {
+      throw new Error('Network response was not ok');
+    })
+  }, [])
 
   const handleClientNameChange = (event: any) => {
     setclientName(event.target.value);
@@ -94,19 +70,16 @@ export const CreateEngagement = () => {
       engagementStartDate: selectedStartDate,
       engagementEndDate: selectedEndDate,
       countyId: parseInt(selectedCountryOption, 10),
-      //selectedAuditTypeOption: parseInt(selectedAuditTypeOption, 10) ,
       auditorids: myArray,
     };
-    try {
-      const response = await axios.post('https://feature1-webappbackend.azurewebsites.net/api/Engagement/AddEngagement', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    } catch (error) {
-      console.error(error);
-    }
 
+    createEngagement(formData).then((res) => {
+      if (res) {
+        navigate("/");
+      }
+    }).catch((err) => {
+      throw new Error('Network response was not ok');
+    })
   }
 
   const BackToHomeComponent = () => {
@@ -138,9 +111,9 @@ export const CreateEngagement = () => {
             </label>
           </div>
           {/* Audit Timelines */}
-          
+
           <div>
-          <label>Audit Timelines: </label>
+            <label>Audit Timelines: </label>
             <label htmlFor="startDate">StartDate* : </label>
             <input className='border border-black' type="date" id="startDate" name="Start" value={selectedStartDate} onChange={handleStarDateChange} />
             <label htmlFor="endDate" className='ml-5'>EndDate* : </label>
@@ -168,12 +141,12 @@ export const CreateEngagement = () => {
             ))}
           </select>
         </section>
-            
-        
+
+
       </main>
       <section>
-            <button className=' class="cursor-pointer float-right p-2 mr-10 border border-black text-center ' onClick={FinalCreateEngagement}>Submit</button>
-            </section>
+        <button className=' class="cursor-pointer float-right p-2 mr-10 border border-black text-center ' onClick={FinalCreateEngagement}>Submit</button>
+      </section>
       <Footer />
     </>
   )

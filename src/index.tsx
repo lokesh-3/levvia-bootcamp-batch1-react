@@ -10,18 +10,21 @@ import axios from 'axios';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
-
-axios.defaults.baseURL = process.env.API_BASE_URL;
-
 axios.interceptors.request.use(
   async (response) => {
-    console.log(response);
+    let msalResponse: any;
+    const accessTokec = sessionStorage.getItem("AccessToken");
     const account = msalInstance.getAllAccounts()[0];
-    const msalResponse = await msalInstance.acquireTokenSilent({
-      ...loginRequest,
-      account: account,
-    });
-    response.headers.Authorization = `Bearer ${msalResponse.accessToken}`;
+    if (!accessTokec) {
+      msalResponse = await msalInstance.acquireTokenSilent({
+        ...loginRequest,
+        account: account,
+      });
+    }
+    if (msalResponse && msalResponse.accessToken) {
+      sessionStorage.setItem("AccessToken", msalResponse.accessToken);
+    }
+    response.headers.Authorization = `Bearer ${accessTokec}`;
     return response;
   },
   (err) => {
