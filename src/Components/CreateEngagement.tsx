@@ -111,14 +111,14 @@ export const CreateEngagement = () => {
             </label>
           </div>
           {/* Audit Timelines */}
-
-          <div>
+          <div className='w-max'>
             <label>Audit Timelines: </label>
-            <label htmlFor="startDate">StartDate* : </label>
-            <input className='border border-black' type="date" id="startDate" name="Start" value={selectedStartDate} onChange={handleStarDateChange} />
+            <label  className='ml-2' htmlFor="startDate">StartDate* : </label>
+            <input className='border border-black ml-2' type="date" id="startDate" name="Start" value={selectedStartDate} onChange={handleStarDateChange} />
             <label htmlFor="endDate" className='ml-5'>EndDate* : </label>
-            <input className='border border-black' type="date" id="endDate" name="End" value={selectedEndDate} onChange={handleEndDateChange} />
+            <input className='border border-black ml-2' type="date" id="endDate" name="End" value={selectedEndDate} onChange={handleEndDateChange} />
           </div>
+        
           {/* country */}
           <div>
             <label htmlFor="country">Country: </label>
@@ -141,12 +141,12 @@ export const CreateEngagement = () => {
             ))}
           </select>
         </section>
-
-
-      </main>
-      <section>
+        <section>
         <button className=' class="cursor-pointer float-right p-2 mr-10 border border-black text-center ' onClick={FinalCreateEngagement}>Submit</button>
       </section>
+
+      </main>
+     
       <Footer />
     </>
   )
