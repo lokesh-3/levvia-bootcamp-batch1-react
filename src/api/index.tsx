@@ -11,3 +11,17 @@ export const getAllAudityTypes = async () => {
     const { data } = await axios.get(baseUrl + "AuditMaster/GetAllAudits");
     return data;
 };
+
+export const createEngagement = async (formData: any) => {
+    const { data } = await axios.post(baseUrl + "Engagement/AddEngagement", formData, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    return data;
+}
+
+export const getAllEngagment = async () => {
+    const { data } = await axios.get(baseUrl + "Engagement/GetAll");
+    return data;
+}
