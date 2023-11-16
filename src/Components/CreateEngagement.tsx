@@ -73,6 +73,11 @@ export const CreateEngagement = () => {
       auditorids: myArray,
     };
 
+    if (new Date(selectedStartDate) >= new Date(selectedEndDate)) {
+      alert('End date should be greater than the start date.');
+      return; 
+    }
+
     createEngagement(formData).then((res) => {
       if (res) {
         navigate("/");
