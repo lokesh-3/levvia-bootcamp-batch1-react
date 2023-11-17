@@ -25,3 +25,9 @@ export const getAllEngagment = async () => {
     const { data } = await axios.get(baseUrl + "Engagement/GetAll");
     return data;
 }
+
+
+export const getUsers = async () => {
+    const { data } = await axios.get(baseUrl + "User/GetUsers");
+    return data;
+}
