@@ -3,17 +3,19 @@ import Header from './Header'
 import Footer from './Footer'
 import { any } from 'prop-types';
 import axios from 'axios';
-import { createEngagement, getAllAudityTypes, getAllCountry } from '../api';
+import { createEngagement, getAllAudityTypes, getAllCountry, getUsers } from '../api';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 
 export const CreateEngagement = () => {
 
   const Auditorsoptions = [
-    { value: 0, auditName: "Risk managment", },
-    { value: 1, auditName: "Compliance", },
-    { value: 2, auditName: "Financial", }
+    { value: 0,label:"Risk" ,auditName: "Risk managment", },
+    { value: 1, label:"Compliance",auditName: "Compliance", },
+    { value: 2,  label: "Financial",auditName: "Financial", }
   ];
   const navigate = useNavigate();
+  const [AuditorData, setAuditorData] = useState<any>([])
   const [selectedAuditorOption, setselectedAuditorOption] = useState<any>([]);
   const [data, setData] = useState<any>([]);
   const [clientName, setclientName] = useState('');
@@ -22,7 +24,25 @@ export const CreateEngagement = () => {
   const [AuditTypesdata, setAuditTypesdata] = useState<any>([]);
   const [selectedCountryOption, setselectedCountryOption] = useState(data);
   const [selectedAuditTypeOption, setselectedAuditTypeOption] = useState(AuditTypesdata);
-
+  const handleTypeSelect = (selectedList: any, selectedItem: any) => {
+    if (selectedList.length >= selectedAuditorOption.length) {
+      setselectedAuditorOption(selectedList);
+      console.log(selectedAuditorOption);
+    } else {
+      const updatedList = selectedAuditorOption.filter(
+        (item: any) => item.id !== selectedItem.id
+      );
+      setselectedAuditorOption(updatedList);
+      console.log(selectedAuditorOption);
+    }
+  
+   
+  };
+    
+      
+       
+      
+      
   useEffect(() => {
 
     getAllCountry().then((response) => {
@@ -32,7 +52,13 @@ export const CreateEngagement = () => {
     }).catch((error) => {
       throw new Error('Network response was not ok');
     })
-
+    getUsers().then((response) =>{
+      if(response){
+        setAuditorData(response);
+      }
+    }).catch((error)=>{
+      throw new Error('Network response was not ok');
+    })
     getAllAudityTypes().then((response) => {
       if (response) {
         setAuditTypesdata(response);
@@ -138,13 +164,16 @@ export const CreateEngagement = () => {
         </section>
         <section className='gap-2'>
           <label htmlFor="auditors">Auditors*: </label>
-          <select className='border border-black ml-5' value={selectedAuditorOption} onChange={handleSelectAuditorsChange}>
-            {Auditorsoptions.map((item: any, index: any) => (
-              <option key={index} value={item?.value}>
-                {item?.auditName}
-              </option>
-            ))}
-          </select>
+          <Select
+           isMulti  
+           className="w-1/2"
+           options={AuditorData.map((user:any) => ({
+          value: user.id,
+          label: user.email,
+          
+        }))}  value={selectedAuditorOption} onChange={handleTypeSelect}/>
+    
+      
         </section>
         <section>
         <button className=' class="cursor-pointer float-right p-2 mr-10 border border-black text-center ' onClick={FinalCreateEngagement}>Submit</button>
