@@ -94,19 +94,19 @@ export const CreateEngagement = () => {
   async function FinalCreateEngagement() {
     AuditorvaluesArray = null;
     if (clientName.trim() === '') {
-      setClientNameerror('Field cannot be empty');
+      setClientNameerror('Client Name Field cannot be empty');
       return;
     }
     if (selectedAuditTypeOption == '') {
-      setAuditTypeerror('Auditortype Field should not be Empty')
+      setAuditTypeerror('Auditortype Field cannot be Empty')
       return;
     }
     if (selectedStartDate == '' || selectedEndDate == '') {
-      setDateerror('Dates should not be null')
+      setDateerror('Start and End Dates cannot be null')
       return;
     }
     if (selectedAuditorOption.length == 0) {
-      setAuditorerror('Auitor should not be selected')
+      setAuditorerror('Auitor field cannot be Empty')
       return;
     }
     else {
