@@ -6,6 +6,16 @@ module.exports = {
       colors:{
         'dark-1':'#000'
       },
+      padding: {
+        '30px': '30px',
+        '20px': '20px'
+      },
+      height: {
+        '20px': '20px'
+      },
+      width: {
+        '15px': '15px'
+      }
     },
   },
   plugins: [],

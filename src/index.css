@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+::file-selector-button {
+    display: none;
+  }
+
+input {
+  padding: 0 10px;
+}

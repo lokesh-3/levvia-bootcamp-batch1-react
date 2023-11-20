@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header'
 import Footer from './Footer'
-import { any } from 'prop-types';
-import axios from 'axios';
 import { createEngagement, getAllAudityTypes, getAllCountry } from '../api';
 import { useNavigate } from 'react-router-dom';
 
