@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header'
 import Footer from './Footer'
-import { createEngagement, getAllAudityTypes, getAllCountry } from '../api';
+import { any } from 'prop-types';
+import axios from 'axios';
+import { createEngagement, getAllAudityTypes, getAllCountry, getUsers } from '../api';
 import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
 
 export const CreateEngagement = () => {
 
   const Auditorsoptions = [
-    { value: 0, auditName: "Risk managment", },
-    { value: 1, auditName: "Compliance", },
-    { value: 2, auditName: "Financial", }
+    { value: 0, label: "Risk", auditName: "Risk managment", },
+    { value: 1, label: "Compliance", auditName: "Compliance", },
+    { value: 2, label: "Financial", auditName: "Financial", }
   ];
   const navigate = useNavigate();
+  const [AuditorData, setAuditorData] = useState<any>([])
   const [selectedAuditorOption, setselectedAuditorOption] = useState<any>([]);
   const [data, setData] = useState<any>([]);
   const [clientName, setclientName] = useState('');
@@ -20,6 +24,23 @@ export const CreateEngagement = () => {
   const [AuditTypesdata, setAuditTypesdata] = useState<any>([]);
   const [selectedCountryOption, setselectedCountryOption] = useState(data);
   const [selectedAuditTypeOption, setselectedAuditTypeOption] = useState(AuditTypesdata);
+  const [ClientNameerror, setClientNameerror] = useState('');
+  const [Dateerror, setDateerror] = useState('');
+  const [AuditTypeerror, setAuditTypeerror] = useState('');
+  const [Auditorerror, setAuditorerror] = useState('');
+  const [ValidationFlag, setValidationFlag] = useState(true);
+  const handleTypeSelect = (selectedList: any, selectedItem: any) => {
+    if (selectedList.length >= selectedAuditorOption.length) {
+      setselectedAuditorOption(selectedList);
+    } else {
+      const updatedList = selectedAuditorOption.filter(
+        (item: any) => item.id !== selectedItem.id
+      );
+      setselectedAuditorOption(updatedList);
+    }
+
+
+  };
 
   useEffect(() => {
 
@@ -30,7 +51,13 @@ export const CreateEngagement = () => {
     }).catch((error) => {
       throw new Error('Network response was not ok');
     })
-
+    getUsers().then((response) => {
+      if (response) {
+        setAuditorData(response);
+      }
+    }).catch((error) => {
+      throw new Error('Network response was not ok');
+    })
     getAllAudityTypes().then((response) => {
       if (response) {
         setAuditTypesdata(response);
@@ -42,33 +69,68 @@ export const CreateEngagement = () => {
 
   const handleClientNameChange = (event: any) => {
     setclientName(event.target.value);
+    setClientNameerror(''); // Clear any previous errors when the input changes
   };
   const handleselectedAuditTypeOption = (event: any) => {
     setselectedAuditTypeOption(event.target.value);
+    setAuditTypeerror(''); // Clear any previous errors when the input changes
   };
   const handleSelectCountryChange = (event: any) => {
     setselectedCountryOption(event.target.value);
   };
   const handleSelectAuditorsChange = (event: any) => {
     setselectedAuditorOption(event.target.value);
+    setAuditorerror(''); // Clear any previous errors when the input changes
   };
   const handleStarDateChange = (event: any) => {
     setselectedStartDate(event.target.value);
+    setDateerror(''); // Clear any previous errors when the input changes
   };
   const handleEndDateChange = (event: any) => {
-    setselectedEndDate(event.target.value)
+    setselectedEndDate(event.target.value);
+    setDateerror(''); // Clear any previous errors when the input changes
   };
 
   async function FinalCreateEngagement() {
-    let myArray = [];
-    myArray.push(parseInt(selectedAuditorOption, 10));
+    AuditorvaluesArray = null;
+    if (clientName.trim() === '') {
+      setClientNameerror('Client Name Field cannot be empty');
+      return;
+    }
+    if (selectedAuditTypeOption == '') {
+      setAuditTypeerror('Auditortype Field cannot be Empty')
+      return;
+    }
+    if (selectedStartDate == '' || selectedEndDate == '') {
+      setDateerror('Start and End Dates cannot be null')
+      return;
+    }
+    if (selectedAuditorOption.length == 0) {
+      setAuditorerror('Auitor field cannot be Empty')
+      return;
+    }
+    else {
+      var AuditorvaluesArray = selectedAuditorOption.map((item: any) => item.value);
+    }
+    if (new Date(selectedStartDate) >= new Date(selectedEndDate)) {
+      alert('End date should be greater than the start date.');
+      return;
+    }
     const formData = {
       clientId: 0,
       clientName: clientName,
       engagementStartDate: selectedStartDate,
       engagementEndDate: selectedEndDate,
       countyId: parseInt(selectedCountryOption, 10),
-      auditorids: myArray,
+      auditorids: AuditorvaluesArray,
+      audittype: "",
+      accountId: 0,
+      accountNumber: "",
+      accountRecievable: 0,
+      cash: 0,
+      otherExpenses: 0,
+      inventory: 0,
+      auditOutcomeId: 0
     };
 
     createEngagement(formData).then((res) => {
@@ -95,10 +157,11 @@ export const CreateEngagement = () => {
       <main className='grid grid-cols-2 mt-10 p-20'>
         <section className='flex flex-col gap-10'>
           <div className='flex flex-col gap-5'>
-            <label className='flex gap-2' htmlFor="clientName">Client Name* :
+            <label className='flex gap-2' htmlFor="clientName">Client Name<span className='text-red-700'>*</span> :
               <input className='border border-black' type="text" id="clientName" name="clientName" value={clientName} onChange={handleClientNameChange} />
             </label>
-            <label htmlFor="auditType">Audit Type* :
+            {ClientNameerror && <p style={{ color: 'red' }}>{ClientNameerror}</p>}
+            <label htmlFor="auditType">Audit Type<span className='text-red-700'>*</span> :
               <select className='border border-black ml-5' placeholder='Select Audit Type' value={selectedAuditTypeOption} onChange={handleselectedAuditTypeOption}>
                 {AuditTypesdata.map((item: any, index: any) => (
                   <option key={index} value={item?.id}>
@@ -107,16 +170,18 @@ export const CreateEngagement = () => {
                 ))}
               </select>
             </label>
+            {AuditTypeerror && <p style={{ color: 'red' }}>{AuditTypeerror}</p>}
           </div>
           {/* Audit Timelines */}
-
-          <div>
+          <div className='w-max'>
             <label>Audit Timelines: </label>
-            <label htmlFor="startDate">StartDate* : </label>
-            <input className='border border-black' type="date" id="startDate" name="Start" value={selectedStartDate} onChange={handleStarDateChange} />
-            <label htmlFor="endDate" className='ml-5'>EndDate* : </label>
-            <input className='border border-black' type="date" id="endDate" name="End" value={selectedEndDate} onChange={handleEndDateChange} />
+            <label className='ml-2' htmlFor="startDate">StartDate<span className='text-red-700'>*</span> : </label>
+            <input className='border border-black ml-2' type="date" id="startDate" name="Start" value={selectedStartDate} onChange={handleStarDateChange} />
+            <label htmlFor="endDate" className='ml-5'>EndDate<span className='text-red-700'>*</span> : </label>
+            <input className='border border-black ml-2' type="date" id="endDate" name="End" value={selectedEndDate} onChange={handleEndDateChange} />
+            {Dateerror && <p style={{ color: 'red' }}>{Dateerror}</p>}
           </div>
+
           {/* country */}
           <div>
             <label htmlFor="country">Country: </label>
@@ -130,21 +195,23 @@ export const CreateEngagement = () => {
           </div>
         </section>
         <section className='gap-2'>
-          <label htmlFor="auditors">Auditors*: </label>
-          <select className='border border-black ml-5' value={selectedAuditorOption} onChange={handleSelectAuditorsChange}>
-            {Auditorsoptions.map((item: any, index: any) => (
-              <option key={index} value={item?.value}>
-                {item?.auditName}
-              </option>
-            ))}
-          </select>
+          <label htmlFor="auditors">Auditors<span className='text-red-700'>*</span> : </label>
+          <Select
+            isMulti
+            className="w-1/2"
+            options={AuditorData.map((user: any) => ({
+              value: user.id,
+              label: user.email,
+
+            }))} value={selectedAuditorOption} onChange={handleTypeSelect} />
+          {Auditorerror && <p style={{ color: 'red' }}>{Auditorerror}</p>}
+        </section>
+        <section>
+          <button className=' class="cursor-pointer float-right p-2 mr-10 border border-black text-center ' onClick={FinalCreateEngagement}>Submit</button>
         </section>
 
-
       </main>
-      <section>
-        <button className=' class="cursor-pointer float-right p-2 mr-10 border border-black text-center ' onClick={FinalCreateEngagement}>Submit</button>
-      </section>
+
       <Footer />
     </>
   )

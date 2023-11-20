@@ -42,5 +42,9 @@ export const updateEngagement = async (formData: any) => {
             'Content-Type': 'application/json',
         }
     });
+}
+
+export const getUsers = async () => {
+    const { data } = await axios.get(baseUrl + "User/GetUsers");
     return data;
 }

@@ -254,7 +254,7 @@ export const ViewEngagement = () => {
     };
 
     console.log(formData);
-    updateEngagement(formData).then((res) => {
+    updateEngagement(formData).then((res: any) => {
       if (res) {
         alert("Engagement is updated Successfully.")
       }
