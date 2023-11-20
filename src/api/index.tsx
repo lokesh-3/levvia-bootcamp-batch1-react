@@ -26,6 +26,23 @@ export const getAllEngagment = async () => {
     return data;
 }
 
+export const getAllAuditOutcome = async () => {
+    const { data } = await axios.get(baseUrl + "AuditOutcomeMaster/GetAllAuditOutcomes");
+    return data;
+}
+
+export const getEngagmentById = async (id: number) => {
+    const { data } = await axios.get(baseUrl + `Engagement/GetEngagementById?id=${id}`);
+    return data;
+}
+
+export const updateEngagement = async (formData: any) => {
+    const { data } = await axios.post(baseUrl + "Engagement/UpdateEngagement", formData, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+}
 
 export const getUsers = async () => {
     const { data } = await axios.get(baseUrl + "User/GetUsers");

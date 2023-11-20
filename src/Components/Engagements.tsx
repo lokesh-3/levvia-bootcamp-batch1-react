@@ -30,17 +30,17 @@ export const Engagements = (props: IEngagement) => {
                     </tr>
                 </thead>
                 <tbody>
-                {props?.tableArray?.map((item:any,index:any) => (
-            <tr key={index}>
-            <td className="border-2">{item.clientId}</td>
-            <td className="border-2">{item.clientName}</td>
-            <td className="border-2">Loading..</td>
-            <td className="border-2">Loading..</td>
-            <td className="border-2">{item.engagementStartDate}</td>
-            <td className="border-2">{item.engagementEndDate}</td>
-            {/* Add more cells based on your data structure */}
-          </tr>
-        ))}
+                    {props?.tableArray?.map((item: any, index: any) => (
+                        <tr key={index}>
+                            <td className="border-2" onClick={() => navigate(`/viewEngagement/${item.clientId}`)}>{item.clientId}</td>
+                            <td className="border-2">{item.clientName}</td>
+                            <td className="border-2">Loading..</td>
+                            <td className="border-2">Loading..</td>
+                            <td className="border-2">{item.engagementStartDate}</td>
+                            <td className="border-2">{item.engagementEndDate}</td>
+                            {/* Add more cells based on your data structure */}
+                        </tr>
+                    ))}
                 </tbody>
             </table>
 
