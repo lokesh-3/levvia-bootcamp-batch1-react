@@ -244,7 +244,7 @@ export const ViewEngagement = () => {
       countyId: parseInt(selectedCountryOption, 10),
       auditorids: myArray,
 
-      audittype: parseInt(selectedAuditTypeOption, 10),
+      audittype: parseInt(selectedAuditTypeOption, 10).toString(),
       accountNumber: accountNumber,
       accountRecievable: Number(accountReceivable),
       cash: Number(cash),
