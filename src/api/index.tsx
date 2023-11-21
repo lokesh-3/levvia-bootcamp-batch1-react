@@ -37,7 +37,7 @@ export const getEngagmentById = async (id: number) => {
 }
 
 export const updateEngagement = async (formData: any) => {
-    const { data } = await axios.post(baseUrl + "Engagement/UpdateEngagement", formData, {
+    const { data } = await axios.put(baseUrl + "Engagement/UpdateEngagement", formData, {
         headers: {
             'Content-Type': 'application/json',
         }
