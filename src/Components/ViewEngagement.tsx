@@ -2,34 +2,19 @@ import React, { useState, useEffect } from 'react';
 
 import Header from './Header'
 import Footer from './Footer'
-import { createEngagement, getAllAuditOutcome, getAllAudityTypes, getAllCountry, getEngagmentById, updateEngagement } from '../api';
+import { getAllAuditOutcome, getAllAudityTypes, getAllCountry, getEngagmentById, getUsers, updateEngagement } from '../api';
 import { useNavigate, useParams } from 'react-router-dom';
-
-interface FormData {
-  clientname: string;
-  audittype: string;
-  startdate: string;
-  enddate: string;
-  country: string;
-  auditors: string;
-  auditstatus: string;
-  accountnumber: string;
-  accountreceivables: string;
-  cash: string;
-  otherexpenses: string;
-  inventory: string;
-  auditoutcome: string;
-  //dropdown: string;
-  //  file: File;
-}
+import Select from 'react-select';
 
 export const ViewEngagement = () => {
 
-  const Auditorsoptions = [
-    { value: 0, auditName: "Risk managment", },
-    { value: 1, auditName: "Compliance", },
-    { value: 2, auditName: "Financial", }
+  const auditStatusOptions = [
+    { id: 1, auditStatus: "Not Started", },
+    { id: 2, auditStatus: "Assigned", },
+    { id: 3, auditStatus: "In Progress", },
+    { id: 4, auditStatus: "Completed", }
   ];
+
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedAuditorOption, setselectedAuditorOption] = useState<any>([]);
@@ -41,7 +26,6 @@ export const ViewEngagement = () => {
   const [selectedCountryOption, setselectedCountryOption] = useState(data);
   const [selectedAuditTypeOption, setselectedAuditTypeOption] = useState(AuditTypesdata);
   const [auditOutcomeData, setAuditOutcomeData] = useState<any>([]);
-  const [engagementData, setEngagementData] = useState<any>();
   const [hideCountryField, setHideCountryField] = useState(true);
   const [hideStartDateField, setHideStartDateField] = useState(true);
   const [hideEndDateField, setHideEndDateField] = useState(true);
@@ -56,8 +40,10 @@ export const ViewEngagement = () => {
   const [inventory, setInventory] = useState('');
   const [auditOutcomeId, setAuditOutcomeId] = useState('');
   const [accountReceivable, setAccountReceivable] = useState('');
+  const [auditStatus, setAuditStatus] = useState();
+  const [AuditorData, setAuditorData] = useState<any>([])
 
-  let engagementDataType: any;
+
   let countryData: any;
   let auditTypeData: any;
   useEffect(() => {
@@ -66,13 +52,9 @@ export const ViewEngagement = () => {
       if (response) {
         setData(response);
         countryData = response;
-        // const val = response.filter(((el: any) => (
-        //   el.id == selectedCountryOption
-        // )))
-        // setDefaultCountryLabel(val);
       }
     }).catch((error) => {
-      throw new Error('Network response was not ok');
+      console.log(error);
     })
 
     getAllAudityTypes().then((response) => {
@@ -81,7 +63,7 @@ export const ViewEngagement = () => {
         auditTypeData = response;
       }
     }).catch((error) => {
-      throw new Error('Network response was not ok');
+      console.log(error);
     })
 
     getAllAuditOutcome().then((response) => {
@@ -89,18 +71,19 @@ export const ViewEngagement = () => {
         setAuditOutcomeData(response);
       }
     }).catch((error) => {
-      throw new Error('Network response was not ok');
+      console.log(error);
+    })
+
+    getUsers().then((response) => {
+      if (response) {
+        setAuditorData(response);
+      }
+    }).catch((error) => {
+      console.log(error);
     })
 
     getEngagmentById(Number(id)).then((res) => {
       if (res) {
-        engagementDataType = {
-          countyId: res.countyId,
-          clientName: res.clientName,
-          engagementStartDate: res.engagementStartDate,
-          engagementEndDate: res.engagementEndDate,
-          auditorids: []
-        }
         setApiResponse(res);
         setclientName(res.clientName);
         setselectedStartDate(res.engagementStartDate);
@@ -108,16 +91,17 @@ export const ViewEngagement = () => {
         setselectedCountryOption(res.countyId);
         setselectedAuditTypeOption(res.audittype);
         const val = countryData.filter(((el: any) => (
-          el.id == res.countyId
+          el.id === res.countyId
         )))
         setDefaultCountryLabel(val[0].countyName);
 
         const auditType = auditTypeData.filter(((el: any) => (
-          el.id == res.audittype
+          el.id === res.audittype
         )))
         setDefaultAuditTypeLabel(auditType[0].auditName);
       }
       setselectedAuditorOption(res.auditorids);
+      setAuditStatus(res.auditStatus)
     }).catch((err) => {
       console.log(err);
     })
@@ -154,17 +138,29 @@ export const ViewEngagement = () => {
   const handleselectedAuditTypeOption = (event: any) => {
     setselectedAuditTypeOption(event.target.value);
   };
+
+  const handleAuditStatusChange = (event: any) => {
+    setAuditStatus(event.target.value);
+  };
+
   const handleSelectCountryChange = (event: any) => {
     setselectedCountryOption(event.target.value);
-  };
-  const handleSelectAuditorsChange = (event: any) => {
-    setselectedAuditorOption(event.target.value);
   };
   const handleStarDateChange = (event: any) => {
     setselectedStartDate(event.target.value);
   };
   const handleEndDateChange = (event: any) => {
     setselectedEndDate(event.target.value)
+  }
+  const handleTypeSelect = (selectedList: any, selectedItem: any) => {
+    if (selectedList.length >= selectedAuditorOption.length) {
+      setselectedAuditorOption(selectedList);
+    } else {
+      const updatedList = selectedAuditorOption.filter(
+        (item: any) => item.id !== selectedItem.id
+      );
+      setselectedAuditorOption(updatedList);
+    }
   };
 
   const handleShowInputFields = (inputFieldName: string) => {
@@ -207,27 +203,6 @@ export const ViewEngagement = () => {
     }
   }
 
-  async function FinalCreateEngagement() {
-    let myArray = [];
-    myArray.push(parseInt(selectedAuditorOption, 10));
-    const formData = {
-      clientId: 0,
-      clientName: clientName,
-      engagementStartDate: selectedStartDate,
-      engagementEndDate: selectedEndDate,
-      countyId: parseInt(selectedCountryOption, 10),
-      auditorids: myArray,
-    };
-
-    createEngagement(formData).then((res) => {
-      if (res) {
-        navigate("/");
-      }
-    }).catch((err) => {
-      throw new Error('Network response was not ok');
-    })
-  }
-
   const BackToHomeComponent = () => {
     window.location.href = '/'
     window.history.replaceState(null, 'Home', '/');
@@ -235,7 +210,7 @@ export const ViewEngagement = () => {
   async function finalupdateEngagement() {
     let myArray = [];
     if (selectedAuditorOption && selectedAuditorOption.length > 0)
-      myArray.push(parseInt(selectedAuditorOption, 10));
+      myArray = selectedAuditorOption.map((item: any) => item.value);
     const formData = {
       clientId: Number(id),
       clientName: clientName,
@@ -244,20 +219,18 @@ export const ViewEngagement = () => {
       countyId: parseInt(selectedCountryOption, 10),
       auditorids: myArray,
 
-      audittype: parseInt(selectedAuditTypeOption, 10).toString(),
+      audittype: parseInt(selectedAuditTypeOption, 10),
       accountNumber: accountNumber,
       accountRecievable: Number(accountReceivable),
       cash: Number(cash),
       otherExpenses: Number(otherExpenses),
       inventory: Number(inventory),
-      auditOutcomeId: Number(auditOutcomeId)
+      auditOutcomeId: Number(auditOutcomeId),
+      auditStatus: parseInt(auditStatus!, 10)
     };
+    updateEngagement(formData).then((res) => {
+      alert("Engagement is updated Successfully.")
 
-    console.log(formData);
-    updateEngagement(formData).then((res: any) => {
-      if (res) {
-        alert("Engagement is updated Successfully.")
-      }
     }).catch((err) => {
       console.log(err);
     })
@@ -386,20 +359,22 @@ export const ViewEngagement = () => {
           <div className='flex justify-between py-[20px]'>
             <div>
               <label htmlFor="auditors">Auditors*: </label>
-              <select className='border border-black ml-5' value={selectedAuditorOption} onChange={handleSelectAuditorsChange}>
-                {Auditorsoptions.map((item: any, index: any) => (
-                  <option key={index} value={item?.value}>
-                    {item?.auditName}
-                  </option>
-                ))}
-              </select>
+              <Select
+                isMulti
+                options={AuditorData.map((user: any) => ({
+                  value: user.id,
+                  label: user.email,
+
+                }))} value={selectedAuditorOption} onChange={handleTypeSelect} />
             </div>
             <div>
-              <label htmlFor="auditors">Audit status: </label>
-              <select className='border border-black ml-5' value={selectedAuditorOption} onChange={handleSelectAuditorsChange}>
-                <option>
-                  Not started
-                </option>
+              <label htmlFor="auditStatus">Audit status: </label>
+              <select className='border border-black ml-5' value={auditStatus} onChange={handleAuditStatusChange}>
+                {auditStatusOptions.map((item: any, index: any) => (
+                  <option key={index} value={item?.id}>
+                    {item?.auditStatus}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -419,11 +394,11 @@ export const ViewEngagement = () => {
         <section className='w-1/2 mx-auto'>
           <div className='flex justify-between py-[20px]'>
             <div>
-              <label htmlFor="auditors">Cash </label>
+              <label htmlFor="cash">Cash </label>
               <input className='border border-black' type="number" id="cash" name="cash" value={cash} onChange={handleCashChange} />
             </div>
             <div>
-              <label htmlFor="auditors">Other expences </label>
+              <label htmlFor="otherExpences">Other expences </label>
               <input className='border border-black' type="number" id="otherExpences" name="otherExpences" value={otherExpenses} onChange={handleOtherExpencesChange} />
             </div>
           </div>
@@ -431,11 +406,11 @@ export const ViewEngagement = () => {
         <section className='w-1/2 mx-auto'>
           <div className='flex justify-between py-[20px]'>
             <div>
-              <label htmlFor="auditors">Inventory </label>
+              <label htmlFor="inventory">Inventory </label>
               <input className='border border-black' type="number" id="inventory" name="inventory" value={inventory} onChange={handleInventoryChange} />
             </div>
             <div>
-              <label htmlFor="auditors">Audit Outcome </label>
+              <label htmlFor="auditOutcome">Audit Outcome </label>
               <select className='border border-black ml-5' value={auditOutcomeId} onChange={handleAuditOutcomeIdChange}>
                 {auditOutcomeData.map((item: any, index: any) => (
                   <option key={index} value={item?.id}>
