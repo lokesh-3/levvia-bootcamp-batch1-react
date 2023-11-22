@@ -42,9 +42,28 @@ export const updateEngagement = async (formData: any) => {
             'Content-Type': 'application/json',
         }
     });
+    return data;
 }
 
 export const getUsers = async () => {
     const { data } = await axios.get(baseUrl + "User/GetUsers");
+    return data;
+}
+
+export const uploadFiles = async (clientId: number, file: any) => {
+    const { data } = await axios.post(baseUrl + `File/UploadSingleDocument?clientId=${clientId}`, file, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
+    });
+    return data;
+}
+
+export const uploadMultipleFiles = async (clientId: number, file: any) => {
+    const { data } = await axios.post(baseUrl + `File/UploadMultipleDocuments?clientId=${clientId}`, file, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
+    });
     return data;
 }
