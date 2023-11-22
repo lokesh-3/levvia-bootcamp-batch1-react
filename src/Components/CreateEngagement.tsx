@@ -123,14 +123,15 @@ export const CreateEngagement = () => {
       engagementEndDate: selectedEndDate,
       countyId: parseInt(selectedCountryOption, 10),
       auditorids: AuditorvaluesArray,
-      audittype: "",
+      audittype: parseInt(selectedAuditTypeOption,10),
       accountId: 0,
       accountNumber: "",
       accountRecievable: 0,
       cash: 0,
       otherExpenses: 0,
       inventory: 0,
-      auditOutcomeId: 0
+      auditOutcomeId: 0,
+      auditStatus:0
     };
 
     createEngagement(formData).then((res) => {
@@ -163,6 +164,7 @@ export const CreateEngagement = () => {
             {ClientNameerror && <p style={{ color: 'red' }}>{ClientNameerror}</p>}
             <label htmlFor="auditType">Audit Type<span className='text-red-700'>*</span> :
               <select className='border border-black ml-5' placeholder='Select Audit Type' value={selectedAuditTypeOption} onChange={handleselectedAuditTypeOption}>
+              <option value="" disabled selected>Select Audit</option>
                 {AuditTypesdata.map((item: any, index: any) => (
                   <option key={index} value={item?.id}>
                     {item?.auditName}
@@ -185,7 +187,8 @@ export const CreateEngagement = () => {
           {/* country */}
           <div>
             <label htmlFor="country">Country: </label>
-            <select className='border border-black ml-5' placeholder='Select Country Type' value={selectedCountryOption} onChange={handleSelectCountryChange}>
+            <select className='border border-black ml-5' value={selectedCountryOption} onChange={handleSelectCountryChange}>
+              <option value="" disabled selected> Select Country</option>
               {data.map((item: any, index: any) => (
                 <option key={index} value={item?.id}>
                   {item?.countyName}
