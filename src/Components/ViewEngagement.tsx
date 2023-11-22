@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import Header from './Header'
 import Footer from './Footer'
-import { getAllAuditOutcome, getAllAudityTypes, getAllCountry, getEngagmentById, getUsers, updateEngagement } from '../api';
+import { getAllAuditOutcome, getAllAudityTypes, getAllCountry, getEngagmentById, getUsers, updateEngagement, uploadFiles } from '../api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
@@ -42,8 +42,8 @@ export const ViewEngagement = () => {
   const [accountReceivable, setAccountReceivable] = useState('');
   const [auditStatus, setAuditStatus] = useState();
   const [AuditorData, setAuditorData] = useState<any>([])
-
-
+  const [files, setFiles] = useState([]);
+  const [selectedName, setSelectedName] = useState("");
   let countryData: any;
   let auditTypeData: any;
   useEffect(() => {
@@ -163,6 +163,13 @@ export const ViewEngagement = () => {
     }
   };
 
+  const handleFileAttachmentChange = (event: any) => {
+    event.preventDefault();
+    setFiles(event.target.files);
+    const file = event.target.files[0];
+    setSelectedName(file.name);
+  }
+
   const handleShowInputFields = (inputFieldName: string) => {
     switch (inputFieldName) {
       case 'country':
@@ -207,6 +214,23 @@ export const ViewEngagement = () => {
     window.location.href = '/'
     window.history.replaceState(null, 'Home', '/');
   };
+
+  const packFiles = (files: any) => {
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('file', files[i]);
+    }
+    return formData;
+  }
+
+  const uploadFilesToDb = (files: any) => {
+    uploadFiles(Number(id), files).then((res) => {
+      console.log(res)
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+
   async function finalupdateEngagement() {
     let myArray = [];
     if (selectedAuditorOption && selectedAuditorOption.length > 0)
@@ -228,9 +252,15 @@ export const ViewEngagement = () => {
       auditOutcomeId: Number(auditOutcomeId),
       auditStatus: parseInt(auditStatus!, 10)
     };
-    updateEngagement(formData).then((res) => {
-      alert("Engagement is updated Successfully.")
 
+    updateEngagement(formData).then((res: any) => {
+      if (res) {
+        if (files) {
+          const data = packFiles(files)
+          uploadFilesToDb(data);
+        }
+        alert("Engagement is updated Successfully.")
+      }
     }).catch((err) => {
       console.log(err);
     })
@@ -429,7 +459,9 @@ export const ViewEngagement = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
                 </svg>
               </label>
-              <input className='hidden' multiple type="file" id="attachment" name="attachment" />
+              <input className='hidden' multiple type="file" id="attachment" name="attachment"
+                onChange={handleFileAttachmentChange} />
+              <label>{selectedName}</label>
             </div>
             <div>
               <button className=' class="cursor-pointer p-1 mr-10 border border-black text-center ' onClick={finalupdateEngagement}>Save</button>
