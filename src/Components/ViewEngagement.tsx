@@ -390,6 +390,7 @@ export const ViewEngagement = () => {
             <div>
               <label htmlFor="auditors">Auditors*: </label>
               <Select
+             className="w-full"
                 isMulti
                 options={AuditorData.map((user: any) => ({
                   value: user.id,

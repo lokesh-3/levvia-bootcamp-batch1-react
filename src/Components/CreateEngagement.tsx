@@ -112,10 +112,7 @@ export const CreateEngagement = () => {
     else {
       var AuditorvaluesArray = selectedAuditorOption.map((item: any) => item.value);
     }
-    if (new Date(selectedStartDate) >= new Date(selectedEndDate)) {
-      alert('End date should be greater than the start date.');
-      return;
-    }
+  
     const formData = {
       clientName: clientName,
       engagementStartDate: selectedStartDate,
@@ -132,6 +129,11 @@ export const CreateEngagement = () => {
       // auditOutcomeId: 0,
       // auditStatus:0
     };
+   
+    if(new Date(selectedStartDate) > new Date(selectedEndDate)) {
+      alert('End date should be greater than the start date.');
+      return; 
+  }
 
     createEngagement(formData).then((res) => {
       if (res) {
