@@ -21,7 +21,7 @@ export const Engagements = (props: IEngagement) => {
             <table>
                 <thead>
                     <tr>
-                        <th className="border-2">Engagement ID</th>
+                        {/* <th className="border-2">Engagement ID</th> */}
                         <th className="border-2">Client Name</th>
                         <th className="border-2">Audit Type</th>
                         <th className="border-2">Status</th>
@@ -32,10 +32,10 @@ export const Engagements = (props: IEngagement) => {
                 <tbody>
                     {props?.tableArray?.map((item: any, index: any) => (
                         <tr key={index}>
-                            <td className="border-2" onClick={() => navigate(`/viewEngagement/${item.clientId}`)}>{item.clientId}</td>
-                            <td className="border-2">{item.clientName}</td>
-                            <td className="border-2">Loading..</td>
-                            <td className="border-2">Loading..</td>
+                            {/* <td className="border-2" onClick={() => navigate(`/viewEngagement/${item.clientId}`)}>{item.clientId}</td> */}
+                            <td className="border-2 cursor-pointer" onClick={() => navigate(`/viewEngagement/${item.clientId}`)}>{item.clientName}</td>
+                            <td className="border-2">{item.auditName}</td>
+                            <td className="border-2">{item.auditStatus}</td>
                             <td className="border-2">{item.engagementStartDate}</td>
                             <td className="border-2">{item.engagementEndDate}</td>
                             {/* Add more cells based on your data structure */}

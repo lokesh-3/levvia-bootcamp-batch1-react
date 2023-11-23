@@ -117,21 +117,20 @@ export const CreateEngagement = () => {
       return;
     }
     const formData = {
-      clientId: 0,
       clientName: clientName,
       engagementStartDate: selectedStartDate,
       engagementEndDate: selectedEndDate,
-      countyId: parseInt(selectedCountryOption, 10),
-      auditorids: AuditorvaluesArray,
-      audittype: parseInt(selectedAuditTypeOption,10),
-      accountId: 0,
-      accountNumber: "",
-      accountRecievable: 0,
-      cash: 0,
-      otherExpenses: 0,
-      inventory: 0,
-      auditOutcomeId: 0,
-      auditStatus:0
+      countryID: parseInt(selectedCountryOption, 10),
+      //auditorids: AuditorvaluesArray,
+      auditType: parseInt(selectedAuditTypeOption,10),
+      // accountId: 0,
+      // accountNumber: "",
+      // accountRecievable: 0,
+      // cash: 0,
+      // otherExpenses: 0,
+      // inventory: 0,
+      // auditOutcomeId: 0,
+      // auditStatus:0
     };
 
     createEngagement(formData).then((res) => {
