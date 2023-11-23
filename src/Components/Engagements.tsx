@@ -21,7 +21,7 @@ export const Engagements = (props: IEngagement) => {
             <table>
                 <thead>
                     <tr>
-                        <th className="border-2">Engagement ID</th>
+                        {/* <th className="border-2">Engagement ID</th> */}
                         <th className="border-2">Client Name</th>
                         <th className="border-2">Audit Type</th>
                         <th className="border-2">Status</th>

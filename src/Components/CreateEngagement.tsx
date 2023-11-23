@@ -117,7 +117,6 @@ export const CreateEngagement = () => {
       return;
     }
     const formData = {
-      clientId: 0,
       clientName: clientName,
       engagementStartDate: selectedStartDate,
       engagementEndDate: selectedEndDate,
@@ -133,7 +132,6 @@ export const CreateEngagement = () => {
       auditOutcomeId: 0,
       auditStatus: 0
     };
-
 
     const formBody: string[] = [];
     selectedAuditorOption.forEach((element: any) => {

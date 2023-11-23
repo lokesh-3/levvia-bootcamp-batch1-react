@@ -13,7 +13,7 @@ export const getAllAudityTypes = async () => {
 };
 
 export const createEngagement = async (formData: any) => {
-    const { data } = await axios.post(baseUrl + "Engagement/AddEngagement", formData, {
+    const { data } = await axios.post(baseUrl + "Engagement/CreateEngagementBySP", formData, {
         headers: {
             'Content-Type': 'application/json',
         }
@@ -22,7 +22,7 @@ export const createEngagement = async (formData: any) => {
 }
 
 export const getAllEngagment = async () => {
-    const { data } = await axios.get(baseUrl + "Engagement/GetAll");
+    const { data } = await axios.get(baseUrl + "Engagement/ViewEngagements");
     return data;
 }
 
