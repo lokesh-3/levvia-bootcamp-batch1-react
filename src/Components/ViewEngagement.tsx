@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import Header from './Header'
 import Footer from './Footer'
-import { getAllAuditOutcome, getAllAudityTypes, getAllCountry, getEngagmentById, getUsers, updateEngagement, uploadFiles } from '../api';
+import { getAllAuditOutcome, getAllAudityTypes, getAllCountry, getAuditReportById, getEngagmentById, getUsers, updateEngagement, uploadFiles } from '../api';
 import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
+import { Circles } from 'react-loader-spinner';
 
 export const ViewEngagement = () => {
 
@@ -44,6 +45,8 @@ export const ViewEngagement = () => {
   const [AuditorData, setAuditorData] = useState<any>([])
   const [files, setFiles] = useState([]);
   const [selectedName, setSelectedName] = useState("");
+  const [isShowLoder, setIsShowLoder] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
   let countryData: any;
   let auditTypeData: any;
   useEffect(() => {
@@ -84,6 +87,9 @@ export const ViewEngagement = () => {
 
     getEngagmentById(Number(id)).then((res) => {
       if (res) {
+        if (res.auditStatus === '4') {
+          setIsDisabled(false);
+        }
         setApiResponse(res);
         setclientName(res.clientName);
         setselectedStartDate(res.engagementStartDate);
@@ -264,6 +270,11 @@ export const ViewEngagement = () => {
     }).catch((err) => {
       console.log(err);
     })
+  }
+  const handleGenerateAuditReport = () => {
+    setIsShowLoder(true);
+    getAuditReportById(Number(id)).then((res) => setIsShowLoder(false));
+    // to do display user downloding in progress
   }
   return (
     <>
@@ -466,8 +477,17 @@ export const ViewEngagement = () => {
             <div>
               <button className=' class="cursor-pointer p-1 mr-10 border border-black text-center ' onClick={finalupdateEngagement}>Save</button>
             </div>
-            <div>
-              <button className=' class="cursor-pointer float-right p-1 mr-10 border border-black text-center '>Generate Audit Report</button>
+            <div className='flex'>
+              <button className=' class="cursor-pointer float-right p-1 mr-10 border border-black text-center' disabled={false} onClick={handleGenerateAuditReport}>Generate Audit Report</button>
+              {isShowLoder && <Circles
+                height="80"
+                width="80"
+                color="#4fa94d"
+                ariaLabel="circles-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                visible={true}
+              />}
             </div>
           </div>
         </section>

@@ -67,3 +67,25 @@ export const uploadMultipleFiles = async (clientId: number, file: any) => {
     });
     return data;
 }
+
+export const getAuditReportById = async (id: number) => {
+    await axios.get(baseUrl + `ReportDownload?auditId=${id}`, { responseType: 'blob' }).then((response) => {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `AuditReport`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode!.removeChild(link);
+    });
+}
+
+export const sendEmailNotifications = async (formBody: any) => {
+    const { data } = await axios.post(baseUrl + `Email/Notification`, formBody, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    return data;
+}

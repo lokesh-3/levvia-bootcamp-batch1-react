@@ -3,7 +3,7 @@ import Header from './Header'
 import Footer from './Footer'
 import { any } from 'prop-types';
 import axios from 'axios';
-import { createEngagement, getAllAudityTypes, getAllCountry, getUsers } from '../api';
+import { createEngagement, getAllAudityTypes, getAllCountry, getUsers, sendEmailNotifications } from '../api';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
@@ -133,8 +133,20 @@ export const CreateEngagement = () => {
       // auditStatus:0
     };
 
+
+    const formBody: string[] = [];
+    selectedAuditorOption.forEach((element: any) => {
+      formBody.push(element.label);
+    });
+
+    const req = {
+      to: formBody
+    }
     createEngagement(formData).then((res) => {
       if (res) {
+        sendEmailNotifications(req).then((res) => {
+          console.log(res)
+        }).catch(err => console.log(err))
         navigate("/");
       }
     }).catch((err) => {
@@ -163,7 +175,7 @@ export const CreateEngagement = () => {
             {ClientNameerror && <p style={{ color: 'red' }}>{ClientNameerror}</p>}
             <label htmlFor="auditType">Audit Type<span className='text-red-700'>*</span> :
               <select className='border border-black ml-5' placeholder='Select Audit Type' value={selectedAuditTypeOption} onChange={handleselectedAuditTypeOption}>
-              <option value="" disabled selected>Select Audit</option>
+                <option value="" disabled selected>Select Audit</option>
                 {AuditTypesdata.map((item: any, index: any) => (
                   <option key={index} value={item?.id}>
                     {item?.auditName}
